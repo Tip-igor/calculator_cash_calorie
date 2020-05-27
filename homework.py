@@ -56,10 +56,10 @@ class CashCalculator(Calculator):
             if record.date == self.today:
                 self.limit -= record.amount
         if currency == "usd":
-            self.limit /= self.USD_RATE
+            self.limit /= CashCalculator.USD_RATE
             money = 'USD'
         elif currency == "eur":
-            self.limit /= self.EURO_RATE
+            self.limit /= CashCalculator.EURO_RATE
             money = 'Euro'
         else:
             money = 'руб'
