@@ -1,5 +1,5 @@
 import datetime as dt
-from datetime import timedelta, datetime
+from datetime import timedelta
 
 
 class Calculator:
@@ -8,7 +8,7 @@ class Calculator:
         self.limit = limit
         self.records = []
         self.today = dt.date.today()
-        self.week_ago = (datetime.now() - timedelta(7)).date()
+        self.week_ago = self.today - timedelta(7)
 
     def add_record(self, record):
         self.records.append(record)
@@ -35,10 +35,10 @@ class Calculator:
 class CaloriesCalculator(Calculator):
 
     def get_calories_remained(self):
-        calories_remained = super().get_today_limit_balance()
+        calories_remained = self.get_today_limit_balance()
         if calories_remained > 0:
-            message = f'Сегодня можно съесть что-нибудь ещё, но с общей ' \
-                      f'калорийностью не более {calories_remained} кКал'
+            message = (f'Сегодня можно съесть что-нибудь ещё, но с общей '
+                       f'калорийностью не более {calories_remained} кКал')
         else:
             message = 'Хватит есть!'
         return message
@@ -50,25 +50,22 @@ class CashCalculator(Calculator):
     RUB_RATE = 1
 
     def get_today_cash_remained(self, currency='rub'):
-        money_dic = {'usd': {'name': 'USD', 'rate': CashCalculator.USD_RATE},
-                     'eur': {'name': 'Euro', 'rate': CashCalculator.EURO_RATE},
-                     'rub': {'name': 'руб', 'rate': CashCalculator.RUB_RATE}}
-        cash_remained = super().get_today_limit_balance()
+        currencies = {'usd': ('USD', CashCalculator.USD_RATE),
+                      'eur': ('Euro', CashCalculator.EURO_RATE),
+                      'rub': ('руб', CashCalculator.RUB_RATE)}
+        cash_remained = self.get_today_limit_balance()
         if cash_remained == 0:
-            message = 'Денег нет, держись'
-        elif currency not in money_dic:
-            message = f'Валюта {currency} не поддерживается'
-        elif cash_remained > 0:
-            cash_remained = round(cash_remained /
-                                  money_dic[currency]['rate'], 2)
-            money = money_dic[currency]['name']
-            message = f'На сегодня осталось {cash_remained} {money}'
+            return 'Денег нет, держись'
+        if currency not in currencies:
+            return f'Валюта {currency} не поддерживается'
+        name, rate = currencies[currency]
+        cash_remained = round(cash_remained / rate, 2)
+        if cash_remained > 0:
+            message = f'На сегодня осталось {cash_remained} {name}'
         else:
-            cash_remained = abs(round(cash_remained /
-                                      money_dic[currency]['rate'], 2))
-            money = money_dic[currency]['name']
-            message = f'Денег нет, держись: твой долг - ' \
-                      f'{cash_remained} {money}'
+            cash_remained = abs(cash_remained)
+            message = (f'Денег нет, держись: твой долг - {cash_remained} '
+                       f'{name}')
         return message
 
 
