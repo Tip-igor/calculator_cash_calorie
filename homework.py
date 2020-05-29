@@ -1,5 +1,4 @@
 import datetime as dt
-from datetime import timedelta
 
 
 class Calculator:
@@ -8,7 +7,7 @@ class Calculator:
         self.limit = limit
         self.records = []
         self.today = dt.date.today()
-        self.week_ago = self.today - timedelta(7)
+        self.week_ago = self.today - dt.timedelta(7)
 
     def add_record(self, record):
         self.records.append(record)
@@ -74,7 +73,7 @@ class Record:
     def __init__(self, amount, comment, date=None):
         self.amount = amount
         self.comment = comment
-        if date == None:
+        if date is None:
             self.date = dt.date.today()
         else:
             self.date = dt.datetime.strptime(date, '%d.%m.%Y').date()
